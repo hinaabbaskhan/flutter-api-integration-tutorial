@@ -1,9 +1,9 @@
 import 'package:api_integration_flutter/constants.dart';
-import 'package:api_integration_flutter/photo_model.dart';
-import 'package:api_integration_flutter/surah_model.dart';
+import 'package:api_integration_flutter/models/photo_model.dart';
+import 'package:api_integration_flutter/models/surah_model.dart';
 import 'package:flutter/material.dart';
 
-import 'networking.dart';
+import '../services/networking.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -16,11 +16,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<SurahModel> getSurah() async {
     NetworkHelper networkHelper = NetworkHelper(surahAPIUrl);
     var surahJsonData = await networkHelper.getData();
-    print('Data: ${surahJsonData['data'][1]['name']}');
+    // print('Data: ${surahJsonData['data'][1]['name']}');
     SurahModel surahModel = SurahModel.fromJson(surahJsonData);
-    print(surahModel);
-    print(surahModel.code);
-    print(surahModel.data![1].name);
+    // print(surahModel);
+    // print(surahModel.code);
+    // print(surahModel.data![1].name);
     return surahModel;
   }
 
@@ -28,13 +28,12 @@ class _HomeScreenState extends State<HomeScreen> {
     List<PhotoModel> photosList = [];
     NetworkHelper networkHelper = NetworkHelper(photoAPIUrl);
     var photoJsonData = await networkHelper.getData();
-    print(photoJsonData);
-
+    // print(photoJsonData);
     for (var item in photoJsonData) {
       PhotoModel photoModel = PhotoModel.fromJson(item);
       photosList.add(photoModel);
     }
-    print(photosList);
+    // print(photosList);
     return photosList;
   }
 
@@ -90,7 +89,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (snapshot.hasError) {
                   return Text('Error');
                 }
-                return Text('Loading...');
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
               },
             ),
           ),
@@ -119,7 +120,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (snapshot.hasError) {
                   return Text('Error');
                 }
-                return Text('Loading...');
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
               },
             ),
           ),

@@ -14,6 +14,7 @@ class NetworkHelper {
       return data;
     } else {
       print('API request failed');
+      throw Exception('API request failed');
     }
   }
 }
