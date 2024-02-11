@@ -1,5 +1,11 @@
-import 'package:api_integration_flutter/screens/home_screen.dart';
+import 'dart:convert';
+
+import 'package:api_integration_flutter/constants.dart';
+import 'package:api_integration_flutter/models/login_response_model.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -10,6 +16,39 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  login(String email, String password) async {
+    final http.Response response = await http.post(
+      Uri.parse(loginAPIUrl),
+      body: {"email": email, "password": password},
+    );
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      print('login successful');
+      var data = jsonDecode(response.body);
+      // method 1
+      // String myToken = data['token'];
+      // print(myToken);
+      //method 2
+      LoginResponseModel loginModel = LoginResponseModel.fromJson(data);
+      String? myToken = loginModel.token!;
+      print(myToken);
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    } else {
+      print('login failed');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Login Failed. Please try again!'),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 right: 18,
               ),
               child: TextFormField(
+                controller: emailController,
                 decoration: const InputDecoration(
                   hintText: 'Please Enter Email',
                   labelText: "Email Address",
@@ -63,6 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               //TextField
               child: TextFormField(
+                controller: passwordController,
                 obscureText: true,
                 decoration: const InputDecoration(
                   hintText: 'Please Enter Password',
@@ -89,10 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             InkWell(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomeScreen()),
-                );
+                login(emailController.text, passwordController.text);
               },
               child: Container(
                 height: 50,
