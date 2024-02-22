@@ -17,4 +17,6 @@ class NetworkHelper {
       throw Exception('API request failed');
     }
   }
+
+  Future<dynamic> postData() async {}
 }
